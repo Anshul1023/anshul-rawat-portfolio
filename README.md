@@ -1,73 +1,54 @@
-# Welcome to your Lovable project
+# Anshul Rawat – Full Stack Developer Portfolio
 
-## Project info
+This repository contains the source code for my **personal portfolio website**, built to showcase my work, skills, and experience as a **Full Stack Developer**.  
+The portfolio is designed with performance, scalability, and clean UI/UX in mind.
 
-**URL**: https://lovable.dev/projects/b844b731-b02c-4d08-a91c-4bf4b8c1020d
+🌐 **Live Website**  
+https://anshul-rawat-portfolio-i8tg47ais-anshulrawat5124-2668s-projects.vercel.app/
 
-## How can I edit this code?
+---
 
-There are several ways of editing your application.
+## 👨‍💻 About Me
 
-**Use Lovable**
+I am a **Full Stack Developer** with experience building modern, scalable, and high-performance web applications.  
+My primary focus is on creating clean frontends with **React** and robust backends using modern APIs and best practices.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/b844b731-b02c-4d08-a91c-4bf4b8c1020d) and start prompting.
+---
 
-Changes made via Lovable will be committed automatically to this repo.
+## 🛠 Tech Stack
 
-**Use your preferred IDE**
+This project is built using the following technologies:
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Frontend
+- **React**
+- **TypeScript**
+- **Vite**
+- **Tailwind CSS**
+- **shadcn/ui**
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Tooling & Deployment
+- **Vercel** (Deployment & Hosting)
+- **Git & GitHub** (Version Control)
 
-Follow these steps:
+---
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## ✨ Features
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+- Fully responsive design
+- Modern UI with reusable components
+- Optimized build using Vite
+- SEO-friendly structure
+- Clean and maintainable codebase
+- Production-ready deployment setup
 
-# Step 3: Install the necessary dependencies.
-npm i
+---
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+## 📂 Project Structure
 
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/b844b731-b02c-4d08-a91c-4bf4b8c1020d) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+```txt
+src/
+├── components/     # Reusable UI components
+├── pages/          # Page-level components
+├── assets/         # Images, icons, and static files
+├── styles/         # Global styles
+└── main.tsx        # App entry point
