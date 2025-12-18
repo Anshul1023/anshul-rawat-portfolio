@@ -3,15 +3,16 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { experience } from '@/data/portfolio';
 import { Briefcase, MapPin, Calendar } from 'lucide-react';
+import { useStoryAnimations } from "@/hooks/useStoryAnimations";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const ExperienceSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
+  const storyRef = useStoryAnimations();
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Title animation
       gsap.fromTo(
         '.exp-title',
         { y: 60, opacity: 0 },
@@ -28,7 +29,6 @@ const ExperienceSection = () => {
         }
       );
 
-      // Timeline line animation
       gsap.fromTo(
         '.timeline-line',
         { scaleY: 0 },
@@ -40,12 +40,11 @@ const ExperienceSection = () => {
             trigger: '.timeline-container',
             start: 'top 80%',
             end: 'bottom 20%',
-            scrub: 1,
+            scrub: true,
           },
         }
       );
 
-      // Experience cards - pinned scroll effect
       experience.forEach((_, index) => {
         gsap.fromTo(
           `.exp-card-${index}`,
@@ -63,14 +62,13 @@ const ExperienceSection = () => {
           }
         );
 
-        // Achievement items stagger
         gsap.fromTo(
           `.exp-card-${index} .achievement-item`,
           { x: -20, opacity: 0 },
           {
             x: 0,
             opacity: 1,
-            duration: 0.5,
+            duration: 0.6,
             stagger: 0.05,
             ease: 'power3.out',
             scrollTrigger: {
@@ -80,6 +78,7 @@ const ExperienceSection = () => {
           }
         );
       });
+
     }, sectionRef);
 
     return () => ctx.revert();
@@ -88,84 +87,107 @@ const ExperienceSection = () => {
   return (
     <section
       id="experience"
-      ref={sectionRef}
-      className="section-padding bg-gradient-to-b from-card/30 to-background"
+      ref={(el) => {
+        sectionRef.current = el;
+        storyRef.current = el;
+      }}
+      className="section-padding bg-gradient-to-b from-card/30 to-background story-root"
     >
-      <div className="container-wide">
-        {/* Section header */}
-        <div className="text-center mb-16 md:mb-24">
-          <p className="exp-title text-primary text-sm uppercase tracking-[0.3em] mb-4">
+      {/* ⬆⬆ WIDTH INCREASED HERE */}
+      <div className="container-wide max-w-[1700px] mx-auto">
+
+        {/* HEADER */}
+        <div className="text-center mb-20 md:mb-28">
+          <p className="exp-title text-primary text-lg uppercase tracking-[0.35em] mb-6 story-text-line">
             Career Journey
           </p>
-          <h2 className="exp-title text-headline font-display">
-            Work <span className="text-gradient">Experience</span>
+
+          <h2 className="exp-title text-6xl md:text-7xl font-display story-mask-title">
+            <span className="mask-text">
+              Work <span className="text-gradient">Experience</span>
+            </span>
           </h2>
         </div>
 
         {/* Timeline */}
-        <div className="timeline-container relative">
-          {/* Timeline line */}
-          <div className="timeline-line absolute left-0 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-primary via-primary/50 to-transparent origin-top hidden md:block" />
+        <div className="timeline-container relative story-timeline-pin">
 
-          {/* Experience cards */}
-          <div className="space-y-12 md:space-y-24">
+          <div
+            className="timeline-line absolute left-0 md:left-1/2 top-0 bottom-0 
+                       w-[2px] bg-gradient-to-b from-primary via-primary/50 to-transparent 
+                       origin-top hidden md:block"
+          />
+
+          {/* Cards */}
+          <div className="space-y-16 md:space-y-32">
             {experience.map((exp, index) => (
               <div
                 key={exp.company}
-                className={`exp-card-${index} relative grid md:grid-cols-2 gap-8 md:gap-16`}
+                className={`exp-card-${index} relative grid md:grid-cols-2 gap-12 md:gap-24 story-stagger-rise`}
               >
-                {/* Timeline dot */}
-                <div className="hidden md:block absolute left-1/2 top-0 -translate-x-1/2 w-4 h-4 rounded-full bg-primary gold-glow z-10" />
 
-                {/* Date - alternating sides */}
+                {/* Timeline Dot */}
                 <div
-                  className={`${
-                    index % 2 === 0 ? 'md:text-right md:pr-16' : 'md:order-2 md:pl-16'
-                  }`}
+                  className="hidden md:block absolute left-1/2 top-0 -translate-x-1/2 
+                             w-6 h-6 rounded-full bg-primary gold-glow z-10 story-parallax-layer"
+                />
+
+                {/* LEFT TEXT SIDE */}
+                <div className={`${index % 2 === 0 ? 'md:text-right md:pr-24' : 'md:order-2 md:pl-24'}`}
                 >
                   <div className={`${index % 2 === 1 ? 'md:text-right' : ''}`}>
-                    <div className="flex items-center gap-2 text-primary mb-2 md:justify-end">
-                      <Calendar className="w-4 h-4" />
-                      <span className="text-sm font-medium">{exp.period}</span>
+
+                    <div className="flex items-center gap-3 text-primary mb-3 md:justify-end text-xl story-text-line">
+                      <Calendar className="w-6 h-6" />
+                      <span className="font-semibold">{exp.period}</span>
                     </div>
-                    <h3 className="font-display text-2xl md:text-3xl mb-2">{exp.role}</h3>
-                    <div className="flex items-center gap-4 text-muted-foreground">
+
+                    <h3 className="font-display text-4xl md:text-5xl mb-4 story-text-line">
+                      {exp.role}
+                    </h3>
+
+                    <div className="flex items-center gap-6 text-muted-foreground text-xl story-text-line">
                       <div className="flex items-center gap-2">
-                        <Briefcase className="w-4 h-4" />
+                        <Briefcase className="w-6 h-6" />
                         <span>{exp.company}</span>
                       </div>
+
                       <div className="flex items-center gap-2">
-                        <MapPin className="w-4 h-4" />
+                        <MapPin className="w-6 h-6" />
                         <span>{exp.location}</span>
                       </div>
                     </div>
+
                   </div>
                 </div>
 
-                {/* Achievements */}
+                {/* ACHIEVEMENTS CARD — wider */}
                 <div
                   className={`premium-card ${
-                    index % 2 === 0 ? 'md:pl-16' : 'md:order-1 md:pr-16'
-                  }`}
+                    index % 2 === 0 ? 'md:pl-24' : 'md:order-1 md:pr-24'
+                  } p-12 md:p-16 max-w-[900px]`}
                 >
-                  <h4 className="text-sm uppercase tracking-wider text-primary mb-4">
+                  <h4 className="text-2xl uppercase tracking-wider text-primary mb-8 story-text-line">
                     Key Achievements
                   </h4>
-                  <ul className="space-y-3">
+
+                  <ul className="space-y-5 text-[20px] leading-relaxed">
                     {exp.achievements.map((achievement, i) => (
                       <li
                         key={i}
-                        className="achievement-item flex items-start gap-3 text-muted-foreground text-sm"
+                        className="achievement-item flex items-start gap-4 text-muted-foreground"
                       >
-                        <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                        <span className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
                         <span>{achievement}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
+
               </div>
             ))}
           </div>
+
         </div>
       </div>
     </section>

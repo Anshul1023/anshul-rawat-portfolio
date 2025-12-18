@@ -1,178 +1,151 @@
-import { useEffect, useRef } from 'react';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import ParticleField from '@/components/three/ParticleField';
-import { personalInfo } from '@/data/portfolio';
-import { ArrowDown, Mail, Linkedin, MapPin } from 'lucide-react';
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import profileImg from "@/assets/fmee.png";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const HeroSection = () => {
-  const sectionRef = useRef<HTMLElement>(null);
-  const titleRef = useRef<HTMLHeadingElement>(null);
-  const subtitleRef = useRef<HTMLParagraphElement>(null);
+export default function HeroSection() {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const nameRef = useRef<HTMLHeadingElement>(null);
+  const imageRef = useRef<HTMLDivElement>(null);
+  const detailsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Kinetic text animation for name
-      const nameChars = titleRef.current?.querySelectorAll('.char');
-      if (nameChars) {
-        gsap.fromTo(
-          nameChars,
-          { y: 100, opacity: 0, rotateX: -90 },
-          {
-            y: 0,
-            opacity: 1,
-            rotateX: 0,
-            duration: 1,
-            stagger: 0.05,
-            ease: 'power3.out',
-            delay: 0.3,
-          }
-        );
-      }
+      gsap.set(imageRef.current, {
+        opacity: 0,
+        scale: 0.85,
+        rotateY: 40,
+        rotateX: 18,
+      });
 
-      // Subtitle reveal
-      gsap.fromTo(
-        subtitleRef.current,
-        { y: 30, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out', delay: 1 }
-      );
+      gsap.set(detailsRef.current?.children || [], {
+        opacity: 0,
+        y: 40,
+      });
 
-      // Contact items stagger
       gsap.fromTo(
-        '.hero-contact-item',
-        { y: 20, opacity: 0 },
+        nameRef.current,
+        { opacity: 0, y: 120, rotateX: -30 },
         {
-          y: 0,
           opacity: 1,
-          duration: 0.6,
-          stagger: 0.1,
-          ease: 'power3.out',
-          delay: 1.2,
+          y: 0,
+          rotateX: 0,
+          duration: 1.6,
+          ease: "power4.out",
         }
       );
 
-      // Scroll indicator
-      gsap.fromTo(
-        '.scroll-indicator-container',
-        { y: 20, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out', delay: 1.6 }
-      );
-
-      // Parallax on scroll
-      gsap.to('.hero-content', {
-        y: 200,
-        opacity: 0,
+      const tl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
-          start: 'top top',
-          end: 'bottom top',
+          start: "top top",
+          end: "+=220%",
           scrub: true,
+          pin: true,
         },
       });
+
+      tl.to(imageRef.current, {
+        opacity: 1,
+        scale: 1,
+        rotateY: 0,
+        rotateX: 0,
+        duration: 1.2,
+        ease: "power4.out",
+      });
+
+      tl.to(
+        detailsRef.current?.children || [],
+        {
+          opacity: 1,
+          y: 0,
+          stagger: 0.25,
+          duration: 1,
+          ease: "power3.out",
+        },
+        "-=0.4"
+      );
     }, sectionRef);
 
     return () => ctx.revert();
   }, []);
 
-  const splitText = (text: string) => {
-    return text.split('').map((char, i) => (
-      <span
-        key={i}
-        className="char inline-block"
-        style={{ display: char === ' ' ? 'inline' : 'inline-block' }}
-      >
-        {char === ' ' ? '\u00A0' : char}
-      </span>
-    ));
-  };
-
   return (
     <section
-      id="hero"
       ref={sectionRef}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden"
+      id="hero"
+      className="relative min-h-screen bg-black overflow-hidden"
     >
-      {/* 3D Background */}
-      <ParticleField />
+      <div className="relative max-w-[1800px] mx-auto px-[10px] h-screen">
+        <div className="grid grid-cols-12 h-full items-center">
 
-      {/* Gradient overlays */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/50 to-background pointer-events-none" />
-      <div className="absolute inset-0 bg-gradient-radial from-primary/5 via-transparent to-transparent pointer-events-none" />
+          {/* ================= LEFT TEXT ================= */}
+          <div className="col-span-6 z-20">
 
-      {/* Content */}
-      <div className="hero-content relative z-10 text-center px-6 md:px-12">
-        {/* Pre-title */}
-        <p className="text-muted-foreground text-sm md:text-base uppercase tracking-[0.3em] mb-6 hero-contact-item">
-          Full Stack Developer
-        </p>
+            {/* NAME WRAPPER (NO CROP EVER, RESPONSIVE) */}
+            <div className="max-w-[1200px]">
+              <h1
+                ref={nameRef}
+                className="
+      font-serif
+      text-gradient
+      leading-[0.95]
+      whitespace-nowrap
+      -ml-[4px]
+      text-[clamp(56px,12vw,150px)]
+    "
+              >
+                Anshul Rawat
+              </h1>
+            </div>
 
-        {/* Main name */}
-        <h1
-          ref={titleRef}
-          className="text-huge font-display font-medium mb-6 perspective-1000"
-        >
-          {splitText(personalInfo.name)}
-        </h1>
 
-        {/* Title */}
-        <p
-          ref={subtitleRef}
-          className="text-xl md:text-2xl lg:text-3xl text-muted-foreground font-light mb-12 max-w-2xl mx-auto"
-        >
-          Building{' '}
-          <span className="text-gradient font-medium">scalable</span>,{' '}
-          high-performance web applications
-        </p>
+            {/* DETAILS */}
+            <div
+              ref={detailsRef}
+              className="mt-12 space-y-10 max-w-[1000px]"
+            >
+              <p className="text-[#d4a84f] uppercase tracking-[0.45em] text-[30px]">
+                Full Stack Developer
+              </p>
 
-        {/* Contact info */}
-        <div className="flex flex-wrap justify-center gap-6 md:gap-8 text-sm text-muted-foreground">
-          <a
-            href={`mailto:${personalInfo.email}`}
-            className="hero-contact-item flex items-center gap-2 hover:text-primary transition-colors group"
-          >
-            <Mail className="w-4 h-4 group-hover:scale-110 transition-transform" />
-            <span className="hidden sm:inline">{personalInfo.email}</span>
-            <span className="sm:hidden">Email</span>
-          </a>
-          <a
-            href={personalInfo.linkedin}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hero-contact-item flex items-center gap-2 hover:text-primary transition-colors group"
-          >
-            <Linkedin className="w-4 h-4 group-hover:scale-110 transition-transform" />
-            <span>LinkedIn</span>
-          </a>
-          <span className="hero-contact-item flex items-center gap-2">
-            <MapPin className="w-4 h-4" />
-            <span className="hidden sm:inline">Faridabad, India</span>
-            <span className="sm:hidden">India</span>
-          </span>
-        </div>
+              <p className="text-gray-400 text-[30px] leading-relaxed">
+                Full-stack developer crafting{" "}
+                <span className="text-white font-medium">scalable, high-performance, responsive web experiences and robust APIs</span>, high-
+                with a cinematic approach to design, motion, and interaction.
+              </p>
 
-        {/* Scroll indicator */}
-        <div className="scroll-indicator-container absolute bottom-12 left-1/2 -translate-x-1/2">
-          <a
-            href="#about"
-            onClick={(e) => {
-              e.preventDefault();
-              document.querySelector('#about')?.scrollIntoView({ behavior: 'smooth' });
-            }}
-            className="flex flex-col items-center gap-3 text-muted-foreground hover:text-primary transition-colors"
-          >
-            <span className="text-xs uppercase tracking-widest">Scroll</span>
-            <ArrowDown className="w-4 h-4 animate-bounce" />
-          </a>
+              <div className="flex gap-10 text-gray-500 text-sm pt-4">
+                <span>✉️ anshulrawat5124@gmail.com</span>
+                <span>🔗 LinkedIn</span>
+                <span>📍 Faridabad</span>
+              </div>
+            </div>
+          </div>
+
+          {/* ================= RIGHT IMAGE ================= */}
+          <div className="col-span-5 col-start-8 flex justify-end">
+            <div
+              ref={imageRef}
+              className="
+      relative
+      hero-image
+      w-[clamp(220px,40vw,640px)]
+      h-[clamp(320px,60vh,900px)]
+    "
+            >
+              <img
+                src={profileImg}
+                alt="Anshul Rawat"
+                className="w-full h-full object-cover grayscale"
+              />
+            </div>
+          </div>
+
         </div>
       </div>
-
-      {/* Decorative elements */}
-      <div className="absolute top-20 left-10 w-32 h-32 border border-primary/10 rounded-full animate-rotate-slow" />
-      <div className="absolute bottom-20 right-10 w-48 h-48 border border-primary/5 rounded-full animate-rotate-slow" style={{ animationDirection: 'reverse' }} />
     </section>
   );
-};
-
-export default HeroSection;
+}

@@ -1,0 +1,33 @@
+.story-root {
+  position: relative;
+}
+
+/* Mask title */
+.story-mask-title {
+  overflow: hidden;
+}
+.story-mask-title .mask-text {
+  display: inline-block;
+  transform: translateY(110%);
+}
+
+/* Text line reveal */
+.story-text-line {
+  overflow: hidden;
+}
+
+/* Parallax */
+.story-parallax-layer {
+  will-change: transform;
+}
+
+/* Pan image */
+.story-pan-image {
+  will-change: transform;
+  display: block;
+}
+
+/* CTA bloom */
+.story-cta-bloom {
+  transform-origin: center;
+}

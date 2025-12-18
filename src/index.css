@@ -1,298 +1,302 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* ================= ROOT ================= */
 @layer base {
   :root {
-    /* Premium Dark Theme */
-    --background: 0 0% 4%;
+    --background: 0 0% 0%;
     --foreground: 0 0% 98%;
-
-    --card: 0 0% 6%;
-    --card-foreground: 0 0% 98%;
-
-    --popover: 0 0% 6%;
-    --popover-foreground: 0 0% 98%;
-
-    /* Gold accent for premium feel */
     --primary: 43 74% 49%;
-    --primary-foreground: 0 0% 4%;
-
-    --secondary: 0 0% 12%;
-    --secondary-foreground: 0 0% 98%;
-
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 60%;
-
-    --accent: 43 74% 49%;
-    --accent-foreground: 0 0% 4%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-
-    --border: 0 0% 18%;
-    --input: 0 0% 18%;
-    --ring: 43 74% 49%;
-
-    --radius: 0.5rem;
-
-    /* Custom premium tokens */
-    --gold: 43 74% 49%;
-    --gold-light: 43 74% 60%;
-    --gold-dark: 43 74% 35%;
-    --surface: 0 0% 8%;
-    --surface-hover: 0 0% 12%;
-    --text-primary: 0 0% 98%;
-    --text-secondary: 0 0% 70%;
-    --text-muted: 0 0% 50%;
-    
-    /* Gradients */
-    --gradient-gold: linear-gradient(135deg, hsl(43, 74%, 49%), hsl(43, 74%, 60%));
-    --gradient-dark: linear-gradient(180deg, hsl(0, 0%, 4%), hsl(0, 0%, 8%));
-    --gradient-radial: radial-gradient(ellipse at center, hsl(0, 0%, 12%) 0%, hsl(0, 0%, 4%) 100%);
-    
-    /* Shadows */
-    --shadow-gold: 0 0 60px hsl(43, 74%, 49%, 0.15);
-    --shadow-lg: 0 25px 50px -12px hsl(0, 0%, 0%, 0.5);
-    --shadow-glow: 0 0 40px hsl(43, 74%, 49%, 0.2);
-
-    /* Typography */
-    --font-display: 'Playfair Display', serif;
-    --font-body: 'Inter', sans-serif;
-
-    /* Animations */
-    --transition-smooth: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    --transition-fast: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-
-  html {
-    scroll-behavior: auto; /* Lenis handles smooth scroll */
   }
 
   body {
-    @apply bg-background text-foreground antialiased;
-    font-family: var(--font-body);
+    background: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: 'Inter', sans-serif;
     overflow-x: hidden;
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-display);
-    @apply font-medium tracking-tight;
-  }
-
-  ::selection {
-    background: hsl(var(--gold) / 0.3);
-    color: hsl(var(--foreground));
+  h1, h2, h3 {
+    font-family: 'Playfair Display', serif;
+    letter-spacing: -0.02em;
   }
 }
 
-@layer components {
-  .text-gradient {
-    @apply bg-clip-text text-transparent;
-    background-image: var(--gradient-gold);
+/* ================= GOLD TEXT ================= */
+.text-gradient {
+  background-image: linear-gradient(
+    135deg,
+    hsl(43 74% 49%),
+    hsl(43 74% 60%)
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* ================= HERO IMAGE CINEMATIC ================= */
+.hero-image {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at center,
+    transparent 35%,
+    rgba(0, 0, 0, 0.9) 85%
+  );
+  pointer-events: none;
+}
+
+.hero-image::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  inset-inline: 0;
+  height: 35%;
+  background: linear-gradient(to top, black, transparent);
+  pointer-events: none;
+}
+
+/* =========================================================
+   HERO SECTION — SAFE RESPONSIVE FIX
+   (NO GSAP / NO JSX / NO UI CHANGE)
+========================================================= */
+
+/* Desktop untouched */
+#hero {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+/* Tablet + Mobile */
+@media (max-width: 1024px) {
+
+  /* ❌ Disable dangerous scaling */
+  #hero > div {
+    transform: none !important;
   }
 
-  .glass {
-    @apply backdrop-blur-xl bg-card/50 border border-border/50;
+  /* Allow natural height */
+  #hero {
+    min-height: auto;
+    height: auto;
+    overflow: visible;
   }
 
-  .gold-glow {
-    box-shadow: var(--shadow-glow);
+  /* Neutralize GSAP pin spacer only for hero */
+  .pin-spacer:has(#hero) {
+    height: auto !important;
+    padding-bottom: 0 !important;
   }
 
-  .hover-lift {
-    @apply transition-all duration-500;
+  /* Stack content safely */
+  #hero .grid {
+    display: flex !important;
+    flex-direction: column;
+    gap: 3rem;
   }
 
-  .hover-lift:hover {
-    transform: translateY(-8px);
-    box-shadow: var(--shadow-gold);
+  /* TEXT COLUMN */
+  #hero .col-span-6 {
+    width: 100%;
+    max-width: 100%;
+    z-index: 2;
   }
 
-  .line-reveal {
-    @apply relative overflow-hidden;
+  /* Name wrapping fix */
+  #hero h1 {
+    white-space: normal !important;
+    word-break: break-word;
   }
 
-  .line-reveal::after {
-    content: '';
-    @apply absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary to-transparent;
-    transform: scaleX(0);
-    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  /* IMAGE COLUMN */
+  #hero .col-span-5 {
+    width: 100%;
+    display: flex;
+    justify-content: center;
   }
 
-  .line-reveal:hover::after {
-    transform: scaleX(1);
+  #hero .hero-image {
+    width: min(88vw, 420px);
+    height: auto;
+    aspect-ratio: 3 / 4;
   }
 
-  .magnetic {
-    @apply transition-transform duration-300 ease-out;
-  }
-
-  .section-padding {
-    @apply py-24 md:py-32 lg:py-40 px-6 md:px-12 lg:px-20;
-  }
-
-  .container-wide {
-    @apply max-w-7xl mx-auto;
-  }
-
-  .text-huge {
-    @apply text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl;
-    line-height: 0.9;
-  }
-
-  .text-display {
-    @apply text-4xl sm:text-5xl md:text-6xl lg:text-7xl;
-    line-height: 1;
-  }
-
-  .text-headline {
-    @apply text-3xl sm:text-4xl md:text-5xl;
-    line-height: 1.1;
-  }
-
-  .skill-badge {
-    @apply px-4 py-2 rounded-full border border-border bg-surface text-sm font-medium;
-    @apply transition-all duration-300 hover:border-primary hover:bg-primary/10;
-  }
-
-  .nav-link {
-    @apply relative text-muted-foreground hover:text-foreground transition-colors duration-300;
-  }
-
-  .nav-link::after {
-    content: '';
-    @apply absolute -bottom-1 left-0 w-0 h-px bg-primary transition-all duration-300;
-  }
-
-  .nav-link:hover::after {
-    @apply w-full;
-  }
-
-  /* Horizontal scroll section */
-  .horizontal-scroll {
-    @apply flex gap-8;
-    width: max-content;
-  }
-
-  /* Premium card */
-  .premium-card {
-    @apply bg-card border border-border rounded-2xl p-8 transition-all duration-500;
-  }
-
-  .premium-card:hover {
-    @apply border-primary/50 bg-surface;
-    box-shadow: var(--shadow-gold);
-  }
-
-  /* Animated underline */
-  .animated-underline {
-    @apply relative;
-  }
-
-  .animated-underline::after {
-    content: '';
-    @apply absolute bottom-0 left-0 w-full h-px bg-primary origin-left scale-x-0 transition-transform duration-500;
-  }
-
-  .animated-underline:hover::after {
-    @apply scale-x-100;
+  #hero .hero-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 }
 
-@layer utilities {
-  .bg-surface {
-    background-color: hsl(var(--surface));
+/* Small phones */
+@media (max-width: 480px) {
+
+  #hero {
+    padding-top: 3.5rem;
+    padding-bottom: 3.5rem;
   }
 
-  .bg-surface-hover {
-    background-color: hsl(var(--surface-hover));
+  #hero .hero-image {
+    width: min(92vw, 360px);
+  }
+}
+
+/* =========================================================
+   ABOUT SECTION — MOBILE READABILITY FIX
+   (NO UI CHANGE)
+========================================================= */
+
+@media (max-width: 768px) {
+  #about {
+    padding-inline: 1.25rem;
   }
 
-  .text-gold {
-    color: hsl(var(--gold));
+  #about p {
+    max-width: 100% !important;
+    line-height: 1.65;
+    font-size: clamp(16px, 4.5vw, 22px);
+  }
+}
+
+@media (max-width: 480px) {
+  #about {
+    padding-inline: 1rem;
   }
 
-  .border-gold {
-    border-color: hsl(var(--gold));
+  #about p {
+    font-size: clamp(15px, 4.8vw, 20px);
+  }
+}
+
+/* =========================================================
+   SKILLS SECTION — STABLE MOBILE FIX
+   (NO UI / NO ANIMATION CHANGE)
+========================================================= */
+
+#skills {
+  width: 100vw;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+#skills canvas {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  #skills {
+    min-height: 100svh;
+    overflow: visible;
+  }
+}
+
+/* =========================================================
+   GLOBAL SAFETY
+========================================================= */
+
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+/* =========================================================
+   HERO PIN FIX — MOBILE STARTS FROM HERO
+   (NO JSX / NO GSAP CHANGE)
+========================================================= */
+
+/* Mobile & Tablet */
+@media (max-width: 1024px) {
+
+  /* Disable GSAP pin effect visually */
+  .pin-spacer:has(#hero) {
+    position: static !important;
+    height: auto !important;
+    padding: 0 !important;
   }
 
-  .bg-gold {
-    background-color: hsl(var(--gold));
+  #hero {
+    position: relative !important;
+    transform: none !important;
+    min-height: auto !important;
+    height: auto !important;
+    overflow: visible !important;
   }
 
-  /* Cursor animations for Three.js */
-  .cursor-glow {
-    @apply pointer-events-none fixed w-8 h-8 rounded-full;
-    background: radial-gradient(circle, hsl(var(--gold) / 0.3), transparent 70%);
-    transform: translate(-50%, -50%);
-    transition: width 0.3s, height 0.3s;
-    z-index: 9999;
+  /* Ensure hero content is visible first */
+  #hero > div {
+    position: relative !important;
+    height: auto !important;
+    min-height: auto !important;
+    transform: none !important;
   }
 
-  /* Kinetic text */
-  .kinetic-text span {
-    @apply inline-block;
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  /* Prevent About from jumping up */
+  #about {
+    margin-top: 0 !important;
+  }
+}
+/* =========================================================
+   HERO — MOBILE FIX (NO JSX / NO GSAP CHANGE)
+========================================================= */
+
+@media (max-width: 1024px) {
+
+  /* Disable pin spacer behaviour */
+  .pin-spacer:has(#hero) {
+    position: static !important;
+    height: auto !important;
+    padding: 0 !important;
   }
 
-  .kinetic-text:hover span {
-    transform: translateY(-4px);
+  /* Hero should flow normally */
+  #hero {
+    position: relative !important;
+    height: auto !important;
+    min-height: 100svh;
+    overflow: hidden;
   }
 
-  /* Parallax helper */
-  .parallax-layer {
-    will-change: transform;
+  /* DO NOT scale or transform hero */
+  #hero > div {
+    transform: none !important;
+    height: auto !important;
+    min-height: auto !important;
   }
 
-  /* Scroll indicator */
-  .scroll-indicator {
-    @apply w-6 h-10 rounded-full border-2 border-muted-foreground/30 flex justify-center pt-2;
+  /* Ensure details text is visible */
+  #hero [style*="opacity: 0"] {
+    opacity: 1 !important;
+    transform: none !important;
   }
 
-  .scroll-indicator::before {
-    content: '';
-    @apply w-1.5 h-1.5 rounded-full bg-primary;
-    animation: scroll-bounce 2s infinite;
+  /* Grid stacks cleanly */
+  #hero .grid {
+    display: flex !important;
+    flex-direction: column;
+    gap: 3rem;
   }
 
-  @keyframes scroll-bounce {
-    0%, 100% { transform: translateY(0); opacity: 1; }
-    50% { transform: translateY(12px); opacity: 0.3; }
+  /* Image safe sizing */
+  #hero .hero-image {
+    width: min(90vw, 420px);
+    aspect-ratio: 3 / 4;
+    margin-inline: auto;
   }
 
-  /* Reveal animations */
-  .reveal-up {
-    opacity: 0;
-    transform: translateY(60px);
-  }
-
-  .reveal-left {
-    opacity: 0;
-    transform: translateX(-60px);
-  }
-
-  .reveal-right {
-    opacity: 0;
-    transform: translateX(60px);
-  }
-
-  .reveal-scale {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-
-  /* Stagger children */
-  .stagger-children > * {
-    opacity: 0;
-    transform: translateY(30px);
+  #hero .hero-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 }
