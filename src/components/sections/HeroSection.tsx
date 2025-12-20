@@ -118,10 +118,41 @@ export default function HeroSection() {
               </p>
 
               <div className="flex gap-10 text-gray-500 text-sm pt-4">
-                <span>✉️ anshulrawat5124@gmail.com</span>
-                <span>🔗 LinkedIn</span>
-                <span>📍 Faridabad</span>
+                <a
+                  href="https://mail.google.com/mail/?view=cm&fs=1&to=anshulrawat5124@gmail.com"
+                  className="hover:text-white transition"
+                >
+                  ✉️ anshulrawat5124@gmail.com
+                </a>
+
+                <a
+                  href="https://www.linkedin.com/in/anshul-rawat-235019290/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition"
+                >
+                  🔗 LinkedIn
+                </a>
+
+                <a
+                  href="https://github.com/Anshul1023"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition"
+                >
+                  🐙 GitHub
+                </a>
+
+                <a
+                  href="https://www.google.com/maps/place/28%C2%B021'50.9%22N+77%C2%B016'59.7%22E/@28.3641411,77.2806631,17z/data=!3m1!4b1!4m4!3m3!8m2!3d28.3641411!4d77.283238?hl=en&entry=ttu&g_ep=EgoyMDI1MTIwOS4wIKXMDSoKLDEwMDc5MjA3MUgBUAM%3D"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition"
+                >
+                  📍 Faridabad
+                </a>
               </div>
+
             </div>
           </div>
 
