@@ -1,27 +1,31 @@
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
-// Storytelling root wrapper (optional but recommended)
-import { useEffect } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
 gsap.registerPlugin(ScrollTrigger);
 
-// ⭐ ADD TARGET CURSOR IMPORT
-import TargetCursor from "@/components/cursor/TargetCursor";
-
-const queryClient = new QueryClient();
+const TargetCursor = lazy(() => import("@/components/cursor/TargetCursor"));
 
 const App = () => {
+  const [showCursor, setShowCursor] = useState(false);
+
+  const cursorEnabled = useMemo(() => {
+    if (typeof window === "undefined") {
+      return false;
+    }
+
+    return window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  }, []);
+
   useEffect(() => {
-    // Ensures ScrollTrigger refreshes after route changes
     const timeout = setTimeout(() => {
       ScrollTrigger.refresh();
     }, 300);
@@ -29,31 +33,38 @@ const App = () => {
     return () => clearTimeout(timeout);
   }, []);
 
+  useEffect(() => {
+    if (!cursorEnabled) {
+      return;
+    }
+
+    setShowCursor(true);
+  }, [cursorEnabled]);
+
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
+    <TooltipProvider>
+      <Toaster />
+      <Sonner />
 
-        <div className="story-root relative">
+      <div className="story-root relative">
+        {showCursor ? (
+          <Suspense fallback={null}>
+            <TargetCursor
+              spinDuration={2}
+              hideDefaultCursor={true}
+              parallaxOn={true}
+            />
+          </Suspense>
+        ) : null}
 
-          {/* ⭐ ADD TARGET CURSOR — DOES NOT BREAK ANYTHING */}
-          <TargetCursor 
-            spinDuration={2}
-            hideDefaultCursor={true}
-            parallaxOn={true}
-          />
-
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              {/* Add all custom routes above the catch-all */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </div>
-      </TooltipProvider>
-    </QueryClientProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </div>
+    </TooltipProvider>
   );
 };
 

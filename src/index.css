@@ -4,7 +4,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ================= ROOT ================= */
 @layer base {
   :root {
     --background: 0 0% 0%;
@@ -12,20 +11,26 @@
     --primary: 43 74% 49%;
   }
 
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
   body {
     background: hsl(var(--background));
     color: hsl(var(--foreground));
     font-family: 'Inter', sans-serif;
-    overflow-x: hidden;
   }
 
-  h1, h2, h3 {
+  h1,
+  h2,
+  h3 {
     font-family: 'Playfair Display', serif;
     letter-spacing: -0.02em;
   }
 }
 
-/* ================= GOLD TEXT ================= */
 .text-gradient {
   background-image: linear-gradient(
     135deg,
@@ -37,10 +42,12 @@
   color: transparent;
 }
 
-/* ================= HERO IMAGE CINEMATIC ================= */
 .hero-image {
   position: relative;
   overflow: hidden;
+  border-radius: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
 }
 
 .hero-image::after {
@@ -65,96 +72,11 @@
   pointer-events: none;
 }
 
-/* =========================================================
-   HERO SECTION — SAFE RESPONSIVE FIX
-   (NO GSAP / NO JSX / NO UI CHANGE)
-========================================================= */
-
-/* Desktop untouched */
 #hero {
   position: relative;
   min-height: 100vh;
   overflow: hidden;
 }
-
-/* Tablet + Mobile */
-@media (max-width: 1024px) {
-
-  /* ❌ Disable dangerous scaling */
-  #hero > div {
-    transform: none !important;
-  }
-
-  /* Allow natural height */
-  #hero {
-    min-height: auto;
-    height: auto;
-    overflow: visible;
-  }
-
-  /* Neutralize GSAP pin spacer only for hero */
-  .pin-spacer:has(#hero) {
-    height: auto !important;
-    padding-bottom: 0 !important;
-  }
-
-  /* Stack content safely */
-  #hero .grid {
-    display: flex !important;
-    flex-direction: column;
-    gap: 3rem;
-  }
-
-  /* TEXT COLUMN */
-  #hero .col-span-6 {
-    width: 100%;
-    max-width: 100%;
-    z-index: 2;
-  }
-
-  /* Name wrapping fix */
-  #hero h1 {
-    white-space: normal !important;
-    word-break: break-word;
-  }
-
-  /* IMAGE COLUMN */
-  #hero .col-span-5 {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-  }
-
-  #hero .hero-image {
-    width: min(88vw, 420px);
-    height: auto;
-    aspect-ratio: 3 / 4;
-  }
-
-  #hero .hero-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-}
-
-/* Small phones */
-@media (max-width: 480px) {
-
-  #hero {
-    padding-top: 3.5rem;
-    padding-bottom: 3.5rem;
-  }
-
-  #hero .hero-image {
-    width: min(92vw, 360px);
-  }
-}
-
-/* =========================================================
-   ABOUT SECTION — MOBILE READABILITY FIX
-   (NO UI CHANGE)
-========================================================= */
 
 @media (max-width: 768px) {
   #about {
@@ -165,6 +87,11 @@
     max-width: 100% !important;
     line-height: 1.65;
     font-size: clamp(16px, 4.5vw, 22px);
+  }
+
+  #skills {
+    min-height: 100svh;
+    overflow: visible;
   }
 }
 
@@ -178,11 +105,6 @@
   }
 }
 
-/* =========================================================
-   SKILLS SECTION — STABLE MOBILE FIX
-   (NO UI / NO ANIMATION CHANGE)
-========================================================= */
-
 #skills {
   width: 100vw;
   min-height: 100vh;
@@ -190,113 +112,7 @@
 }
 
 #skills canvas {
+  display: block;
   width: 100% !important;
   height: 100% !important;
-  display: block;
-}
-
-@media (max-width: 768px) {
-  #skills {
-    min-height: 100svh;
-    overflow: visible;
-  }
-}
-
-/* =========================================================
-   GLOBAL SAFETY
-========================================================= */
-
-html, body {
-  max-width: 100%;
-  overflow-x: hidden;
-}
-/* =========================================================
-   HERO PIN FIX — MOBILE STARTS FROM HERO
-   (NO JSX / NO GSAP CHANGE)
-========================================================= */
-
-/* Mobile & Tablet */
-@media (max-width: 1024px) {
-
-  /* Disable GSAP pin effect visually */
-  .pin-spacer:has(#hero) {
-    position: static !important;
-    height: auto !important;
-    padding: 0 !important;
-  }
-
-  #hero {
-    position: relative !important;
-    transform: none !important;
-    min-height: auto !important;
-    height: auto !important;
-    overflow: visible !important;
-  }
-
-  /* Ensure hero content is visible first */
-  #hero > div {
-    position: relative !important;
-    height: auto !important;
-    min-height: auto !important;
-    transform: none !important;
-  }
-
-  /* Prevent About from jumping up */
-  #about {
-    margin-top: 0 !important;
-  }
-}
-/* =========================================================
-   HERO — MOBILE FIX (NO JSX / NO GSAP CHANGE)
-========================================================= */
-
-@media (max-width: 1024px) {
-
-  /* Disable pin spacer behaviour */
-  .pin-spacer:has(#hero) {
-    position: static !important;
-    height: auto !important;
-    padding: 0 !important;
-  }
-
-  /* Hero should flow normally */
-  #hero {
-    position: relative !important;
-    height: auto !important;
-    min-height: 100svh;
-    overflow: hidden;
-  }
-
-  /* DO NOT scale or transform hero */
-  #hero > div {
-    transform: none !important;
-    height: auto !important;
-    min-height: auto !important;
-  }
-
-  /* Ensure details text is visible */
-  #hero [style*="opacity: 0"] {
-    opacity: 1 !important;
-    transform: none !important;
-  }
-
-  /* Grid stacks cleanly */
-  #hero .grid {
-    display: flex !important;
-    flex-direction: column;
-    gap: 3rem;
-  }
-
-  /* Image safe sizing */
-  #hero .hero-image {
-    width: min(90vw, 420px);
-    aspect-ratio: 3 / 4;
-    margin-inline: auto;
-  }
-
-  #hero .hero-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
 }
