@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import { Toaster } from "@/components/ui/toaster";
@@ -6,6 +6,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useEnhancedMotion } from "@/hooks/useEnhancedMotion";
 
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
@@ -15,15 +16,7 @@ gsap.registerPlugin(ScrollTrigger);
 const TargetCursor = lazy(() => import("@/components/cursor/TargetCursor"));
 
 const App = () => {
-  const [showCursor, setShowCursor] = useState(false);
-
-  const cursorEnabled = useMemo(() => {
-    if (typeof window === "undefined") {
-      return false;
-    }
-
-    return window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-  }, []);
+  const enhancedMotion = useEnhancedMotion();
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -33,21 +26,13 @@ const App = () => {
     return () => clearTimeout(timeout);
   }, []);
 
-  useEffect(() => {
-    if (!cursorEnabled) {
-      return;
-    }
-
-    setShowCursor(true);
-  }, [cursorEnabled]);
-
   return (
     <TooltipProvider>
       <Toaster />
       <Sonner />
 
       <div className="story-root relative">
-        {showCursor ? (
+        {enhancedMotion ? (
           <Suspense fallback={null}>
             <TargetCursor
               spinDuration={2}

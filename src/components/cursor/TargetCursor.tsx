@@ -21,6 +21,8 @@ const TargetCursor = ({
   const cornersRef = useRef<NodeListOf<HTMLDivElement>>();
   const dotRef = useRef<HTMLDivElement>(null);
   const spinTl = useRef<gsap.core.Timeline | null>(null);
+  const moveXRef = useRef<((value: number) => void) | null>(null);
+  const moveYRef = useRef<((value: number) => void) | null>(null);
 
   const activeStrengthRef = useRef(0);
   const targetCornerPositionsRef = useRef<{ x: number; y: number }[] | null>(
@@ -42,13 +44,8 @@ const TargetCursor = ({
   };
 
   const moveCursor = useCallback((x: number, y: number) => {
-    if (!cursorRef.current) return;
-    gsap.to(cursorRef.current, {
-      x,
-      y,
-      duration: 0.12,
-      ease: "power3.out",
-    });
+    moveXRef.current?.(x);
+    moveYRef.current?.(y);
   }, []);
 
   useEffect(() => {
@@ -63,6 +60,15 @@ const TargetCursor = ({
     gsap.set(cursor, {
       xPercent: -50,
       yPercent: -50,
+    });
+
+    moveXRef.current = gsap.quickTo(cursor, "x", {
+      duration: 0.12,
+      ease: "power3.out",
+    });
+    moveYRef.current = gsap.quickTo(cursor, "y", {
+      duration: 0.12,
+      ease: "power3.out",
     });
 
     // Start spin
@@ -92,11 +98,9 @@ const TargetCursor = ({
 
       cornersRef.current.forEach((corner, i) => {
         const target = targetCornerPositionsRef.current![i];
-        gsap.to(corner, {
+        gsap.set(corner, {
           x: target.x - cursorX,
           y: target.y - cursorY,
-          duration: parallaxOn ? 0.12 : 0,
-          ease: "power1.out",
         });
       });
     };

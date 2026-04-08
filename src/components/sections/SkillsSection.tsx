@@ -1,7 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+import { useEnhancedMotion } from "@/hooks/useEnhancedMotion";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -50,13 +52,66 @@ const portalSections = [
   },
 ];
 
-export default function SkillsSection(): JSX.Element {
+const StaticSkillsSection = () => (
+  <section
+    id="skills"
+    className="relative overflow-hidden bg-black px-6 py-24 text-white md:px-10"
+  >
+    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.08),transparent_45%)]" />
+    <div className="relative mx-auto max-w-7xl">
+      <div className="mb-14 text-center">
+        <p className="mb-4 text-sm uppercase tracking-[0.4em] text-primary">
+          Skills
+        </p>
+        <h2 className="text-5xl font-display md:text-7xl">
+          Technical Dimensions
+        </h2>
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+        {portalSections.map((section) => (
+          <article
+            key={section.title}
+            className="rounded-[28px] border border-white/10 bg-white/[0.03] p-8 backdrop-blur"
+            style={{
+              boxShadow: `0 18px 50px rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba(255,255,255,0.03)`,
+            }}
+          >
+            <span
+              className="mb-6 inline-flex rounded-full px-4 py-2 text-xs uppercase tracking-[0.25em]"
+              style={{
+                color: `#${section.color.toString(16).padStart(6, "0")}`,
+                background: "#ffffff10",
+              }}
+            >
+              {section.subtitle}
+            </span>
+
+            <h3 className="mb-4 text-3xl font-display">{section.title}</h3>
+
+            <div className="flex flex-wrap gap-3">
+              {section.skills.map((skill) => (
+                <span
+                  key={skill}
+                  className="rounded-full border border-white/10 px-4 py-2 text-sm text-white/80"
+                >
+                  {skill}
+                </span>
+              ))}
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+);
+
+const InteractiveSkillsSection = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const progressBarRef = useRef<HTMLDivElement | null>(null);
 
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
-  const sceneRef = useRef<THREE.Scene | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
   const portalsRef = useRef<THREE.Group[]>([]);
   const tunnelGeoRef = useRef<THREE.BufferGeometry | null>(null);
@@ -75,12 +130,10 @@ export default function SkillsSection(): JSX.Element {
       material: THREE.Material | THREE.Material[] | undefined
     ) => {
       if (!material) return;
-
       if (Array.isArray(material)) {
         material.forEach((entry) => entry.dispose());
         return;
       }
-
       material.dispose();
     };
 
@@ -92,12 +145,11 @@ export default function SkillsSection(): JSX.Element {
       powerPreference: "high-performance",
     });
     renderer.setClearColor(0x000000);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.25));
     rendererRef.current = renderer;
 
     const scene = new THREE.Scene();
     scene.fog = new THREE.FogExp2(0x000000, 0.02);
-    sceneRef.current = scene;
 
     const camera = new THREE.PerspectiveCamera(
       75,
@@ -108,90 +160,101 @@ export default function SkillsSection(): JSX.Element {
     camera.position.z = 5;
     cameraRef.current = camera;
 
-    const portalSpacing = 28;
+    const portalSpacing = 26;
     const portals: THREE.Group[] = [];
 
     portalSections.forEach((section, idx) => {
       const group = new THREE.Group();
       group.position.z = -idx * portalSpacing - 20;
 
-      const torus = new THREE.Mesh(
-        new THREE.TorusGeometry(8, 0.6, 16, 100),
-        new THREE.MeshStandardMaterial({
-          color: section.color,
-          emissive: section.color,
-          emissiveIntensity: 0.4,
-          metalness: 0.9,
-          roughness: 0.1,
-        })
+      group.add(
+        new THREE.Mesh(
+          new THREE.TorusGeometry(8, 0.6, 16, 100),
+          new THREE.MeshStandardMaterial({
+            color: section.color,
+            emissive: section.color,
+            emissiveIntensity: 0.35,
+            metalness: 0.9,
+            roughness: 0.1,
+          })
+        )
       );
-      group.add(torus);
 
-      const disc = new THREE.Mesh(
-        new THREE.CircleGeometry(7.5, 64),
-        new THREE.MeshBasicMaterial({
-          color: section.color,
-          transparent: true,
-          opacity: 0.2,
-          side: THREE.DoubleSide,
-          blending: THREE.AdditiveBlending,
-        })
+      group.add(
+        new THREE.Mesh(
+          new THREE.CircleGeometry(7.5, 64),
+          new THREE.MeshBasicMaterial({
+            color: section.color,
+            transparent: true,
+            opacity: 0.18,
+            side: THREE.DoubleSide,
+            blending: THREE.AdditiveBlending,
+          })
+        )
       );
-      group.add(disc);
 
-      const wireframeGeo = new THREE.TorusGeometry(8.3, 0.65, 16, 100);
-      const wireEdges = new THREE.EdgesGeometry(wireframeGeo);
-      const wire = new THREE.LineSegments(
-        wireEdges,
-        new THREE.LineBasicMaterial({
-          color: 0xffffff,
-          transparent: true,
-          opacity: 0.25,
-        })
+      const wireGeometry = new THREE.EdgesGeometry(
+        new THREE.TorusGeometry(8.3, 0.65, 16, 100)
       );
-      group.add(wire);
+      group.add(
+        new THREE.LineSegments(
+          wireGeometry,
+          new THREE.LineBasicMaterial({
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.2,
+          })
+        )
+      );
 
-      const pCount = 220;
-      const pPos = new Float32Array(pCount * 3);
-      const pCol = new Float32Array(pCount * 3);
-      const color = new THREE.Color(section.particleColor);
+      const particleCount = 120;
+      const particlePosition = new Float32Array(particleCount * 3);
+      const particleColor = new Float32Array(particleCount * 3);
+      const particleBaseColor = new THREE.Color(section.particleColor);
 
-      for (let i = 0; i < pCount; i++) {
-        const angle = (i / pCount) * Math.PI * 2;
+      for (let i = 0; i < particleCount; i++) {
+        const angle = (i / particleCount) * Math.PI * 2;
         const radius = 3 + Math.random() * 4;
-        pPos[i * 3] = Math.cos(angle) * radius;
-        pPos[i * 3 + 1] = Math.sin(angle) * radius;
-        pPos[i * 3 + 2] = (Math.random() - 0.5) * 2;
+        particlePosition[i * 3] = Math.cos(angle) * radius;
+        particlePosition[i * 3 + 1] = Math.sin(angle) * radius;
+        particlePosition[i * 3 + 2] = (Math.random() - 0.5) * 2;
 
-        pCol[i * 3] = color.r;
-        pCol[i * 3 + 1] = color.g;
-        pCol[i * 3 + 2] = color.b;
+        particleColor[i * 3] = particleBaseColor.r;
+        particleColor[i * 3 + 1] = particleBaseColor.g;
+        particleColor[i * 3 + 2] = particleBaseColor.b;
       }
 
       const particleGeometry = new THREE.BufferGeometry();
-      particleGeometry.setAttribute("position", new THREE.BufferAttribute(pPos, 3));
-      particleGeometry.setAttribute("color", new THREE.BufferAttribute(pCol, 3));
-
-      const particles = new THREE.Points(
-        particleGeometry,
-        new THREE.PointsMaterial({
-          size: 0.15,
-          vertexColors: true,
-          transparent: true,
-          opacity: 0.85,
-          blending: THREE.AdditiveBlending,
-        })
+      particleGeometry.setAttribute(
+        "position",
+        new THREE.BufferAttribute(particlePosition, 3)
       );
-      group.add(particles);
+      particleGeometry.setAttribute(
+        "color",
+        new THREE.BufferAttribute(particleColor, 3)
+      );
 
-      group.add(new THREE.PointLight(section.color, 2.5, 40));
+      group.add(
+        new THREE.Points(
+          particleGeometry,
+          new THREE.PointsMaterial({
+            size: 0.14,
+            vertexColors: true,
+            transparent: true,
+            opacity: 0.75,
+            blending: THREE.AdditiveBlending,
+          })
+        )
+      );
+
+      group.add(new THREE.PointLight(section.color, 2.1, 40));
       scene.add(group);
       portals.push(group);
     });
 
     portalsRef.current = portals;
 
-    const tunnelCount = 1200;
+    const tunnelCount = 750;
     const tunnelPosition = new Float32Array(tunnelCount * 3);
     const tunnelColor = new Float32Array(tunnelCount * 3);
 
@@ -201,6 +264,7 @@ export default function SkillsSection(): JSX.Element {
       tunnelPosition[i * 3] = Math.cos(angle) * radius;
       tunnelPosition[i * 3 + 1] = Math.sin(angle) * radius;
       tunnelPosition[i * 3 + 2] = (Math.random() - 0.5) * 200;
+
       const brightness = Math.random();
       tunnelColor[i * 3] = brightness;
       tunnelColor[i * 3 + 1] = brightness * 0.8;
@@ -215,16 +279,17 @@ export default function SkillsSection(): JSX.Element {
     tunnelGeometry.setAttribute("color", new THREE.BufferAttribute(tunnelColor, 3));
     tunnelGeoRef.current = tunnelGeometry;
 
-    const tunnel = new THREE.Points(
-      tunnelGeometry,
-      new THREE.PointsMaterial({
-        size: 0.15,
-        vertexColors: true,
-        transparent: true,
-        opacity: 0.7,
-      })
+    scene.add(
+      new THREE.Points(
+        tunnelGeometry,
+        new THREE.PointsMaterial({
+          size: 0.12,
+          vertexColors: true,
+          transparent: true,
+          opacity: 0.5,
+        })
+      )
     );
-    scene.add(tunnel);
 
     scene.add(new THREE.AmbientLight(0xffffff, 0.3));
 
@@ -248,21 +313,10 @@ export default function SkillsSection(): JSX.Element {
       const time = performance.now() / 1000;
 
       portalsRef.current.forEach((portal, idx) => {
-        portal.children[0].rotation.z = time * 0.5;
-        portal.children[1].scale.setScalar(1 + Math.sin(time * 2 + idx) * 0.05);
-
-        const wireframe = portal.children[2];
-        if (wireframe) {
-          wireframe.rotation.z = -time * 0.3;
-        }
-
-        const particles = portal.children.find(
-          (child) => child instanceof THREE.Points
-        );
-
-        if (particles) {
-          particles.rotation.z = time * 0.8 + idx;
-        }
+        portal.children[0].rotation.z = time * 0.45;
+        portal.children[1].scale.setScalar(1 + Math.sin(time * 2 + idx) * 0.04);
+        portal.children[2].rotation.z = -time * 0.25;
+        portal.children[3].rotation.z = time * 0.7 + idx;
       });
 
       const tunnelPositions = tunnelGeoRef.current?.attributes.position
@@ -270,29 +324,23 @@ export default function SkillsSection(): JSX.Element {
 
       if (tunnelPositions && tunnelGeoRef.current) {
         for (let i = 2; i < tunnelPositions.length; i += 3) {
-          tunnelPositions[i] += 1.35;
+          tunnelPositions[i] += 1.05;
           if (tunnelPositions[i] > 100) tunnelPositions[i] = -100;
         }
 
         tunnelGeoRef.current.attributes.position.needsUpdate = true;
       }
 
-      if (cameraRef.current) {
-        cameraRef.current.position.z +=
-          (targetZRef.current - cameraRef.current.position.z) * 0.06;
-        cameraRef.current.position.x = Math.sin(time * 0.12) * 0.05;
-        cameraRef.current.position.y = Math.cos(time * 0.07) * 0.03;
-      }
+      camera.position.z += (targetZRef.current - camera.position.z) * 0.06;
+      camera.position.x = Math.sin(time * 0.12) * 0.04;
+      camera.position.y = Math.cos(time * 0.07) * 0.03;
 
       renderer.render(scene, camera);
       rafRef.current = requestAnimationFrame(tick);
     };
 
     const startAnimation = () => {
-      if (isAnimatingRef.current) {
-        return;
-      }
-
+      if (isAnimatingRef.current) return;
       isAnimatingRef.current = true;
       if (rafRef.current == null) {
         rafRef.current = requestAnimationFrame(tick);
@@ -301,7 +349,6 @@ export default function SkillsSection(): JSX.Element {
 
     const stopAnimation = () => {
       isAnimatingRef.current = false;
-
       if (rafRef.current != null) {
         cancelAnimationFrame(rafRef.current);
         rafRef.current = null;
@@ -310,7 +357,6 @@ export default function SkillsSection(): JSX.Element {
 
     const handleVisibilityChange = () => {
       isPageVisibleRef.current = !document.hidden;
-
       if (document.hidden) {
         stopAnimation();
       } else if (ScrollTrigger.isInViewport(containerRef.current!)) {
@@ -320,7 +366,7 @@ export default function SkillsSection(): JSX.Element {
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
-    const sectionActivity = ScrollTrigger.create({
+    const activityTrigger = ScrollTrigger.create({
       trigger: containerRef.current,
       start: "top bottom",
       end: "bottom top",
@@ -330,28 +376,25 @@ export default function SkillsSection(): JSX.Element {
       onLeaveBack: stopAnimation,
     });
 
-    const portalSpacingLocal = portalSpacing;
-
-    const tl = gsap.timeline({
+    const timeline = gsap.timeline({
       scrollTrigger: {
         trigger: containerRef.current,
         start: "top top",
         end: () =>
-          `+=${containerRef.current!.clientHeight + window.innerHeight * 0.8}`,
-        scrub: 0.6,
+          `+=${containerRef.current!.clientHeight + window.innerHeight * 0.55}`,
+        scrub: 0.45,
         pin: true,
         anticipatePin: 1,
       },
     });
 
-    tl.to(progressRef.current, {
+    timeline.to(progressRef.current, {
       value: 1,
       ease: "none",
       duration: 1,
       onUpdate: () => {
         const progress = progressRef.current.value;
-        targetZRef.current =
-          5 - progress * ((portalSections.length - 1) * portalSpacingLocal);
+        targetZRef.current = 5 - progress * ((portalSections.length - 1) * portalSpacing);
         const idx = Math.floor(progress * portalSections.length);
         const clamped = Math.min(Math.max(idx, 0), portalSections.length - 1);
         setCurrentPortal((prev) => (prev === clamped ? prev : clamped));
@@ -367,8 +410,8 @@ export default function SkillsSection(): JSX.Element {
     return () => {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       window.removeEventListener("resize", onResize);
-      sectionActivity.kill();
-      tl.kill();
+      activityTrigger.kill();
+      timeline.kill();
       stopAnimation();
 
       scene.traverse((item) => {
@@ -402,8 +445,7 @@ export default function SkillsSection(): JSX.Element {
       <div
         className="pointer-events-none absolute inset-0 z-10"
         style={{
-          background:
-            "radial-gradient(circle, transparent 30%, rgba(0,0,0,0.75))",
+          background: "radial-gradient(circle, transparent 30%, rgba(0,0,0,0.75))",
         }}
       />
 
@@ -421,7 +463,7 @@ export default function SkillsSection(): JSX.Element {
             </span>
           </div>
 
-          <h1
+          <h2
             className="mb-3 text-6xl font-black tracking-tight md:text-8xl"
             style={{
               color: `#${active.color.toString(16).padStart(6, "0")}`,
@@ -429,7 +471,7 @@ export default function SkillsSection(): JSX.Element {
             }}
           >
             {active.title}
-          </h1>
+          </h2>
 
           <p className="mb-10 text-2xl text-gray-300">{active.subtitle}</p>
 
@@ -437,7 +479,7 @@ export default function SkillsSection(): JSX.Element {
             {active.skills.map((skill) => (
               <div
                 key={skill}
-                className="rounded-xl border px-6 py-3 backdrop-blur-xl transition-all hover:scale-110"
+                className="rounded-xl border px-6 py-3 backdrop-blur-xl transition-all hover:scale-105"
                 style={{
                   borderColor: "#ffffff30",
                   background: "#ffffff05",
@@ -471,4 +513,10 @@ export default function SkillsSection(): JSX.Element {
       </div>
     </section>
   );
+};
+
+export default function SkillsSection(): JSX.Element {
+  const enhancedMotion = useEnhancedMotion();
+
+  return enhancedMotion ? <InteractiveSkillsSection /> : <StaticSkillsSection />;
 }

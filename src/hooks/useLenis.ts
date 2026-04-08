@@ -2,14 +2,16 @@ import { useEffect, useRef } from 'react';
 import Lenis from 'lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useEnhancedMotion } from './useEnhancedMotion';
 
 gsap.registerPlugin(ScrollTrigger);
 
 export const useLenis = () => {
   const lenisRef = useRef<Lenis | null>(null);
+  const enhancedMotion = useEnhancedMotion();
 
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    if (!enhancedMotion) {
       return;
     }
 
@@ -39,7 +41,7 @@ export const useLenis = () => {
       lenis.destroy();
       gsap.ticker.remove(onTick);
     };
-  }, []);
+  }, [enhancedMotion]);
 
   return lenisRef;
 };
