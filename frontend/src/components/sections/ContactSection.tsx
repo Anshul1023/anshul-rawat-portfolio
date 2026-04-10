@@ -57,21 +57,30 @@ export function ContactSection() {
     setStatus(null);
 
     try {
-      const response = await fetch(`${apiBaseUrl}/send-email`, {
+      const requestConfig = {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
         body: JSON.stringify(form)
-      });
+      };
 
-      const payload = (await response.json()) as { success?: boolean; message?: string };
+      let response = await fetch(`${apiBaseUrl}/send-email`, requestConfig);
 
-      if (!response.ok || !payload.success) {
-        throw new Error(payload.message || "Message delivery failed.");
+      if (response.status === 404) {
+        response = await fetch(`${apiBaseUrl}/contact`, requestConfig);
       }
 
-      setStatus({ type: "success", message: payload.message || "Message sent successfully." });
+      const payload = (await response.json()) as { success?: boolean; message?: string; detail?: string };
+
+      if (!response.ok) {
+        throw new Error(payload.message || payload.detail || "Message delivery failed.");
+      }
+
+      setStatus({
+        type: "success",
+        message: payload.message || "Message sent successfully."
+      });
       setForm(initialForm);
     } catch (error) {
       setStatus({
