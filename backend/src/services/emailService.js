@@ -54,30 +54,30 @@ async function sendWithResend({ name, email, message }) {
 }
 
 export async function sendPortfolioEmail({ name, email, message }) {
-  if (env.resendConfigured) {
-    return sendWithResend({ name, email, message });
+  if (env.smtpConfigured) {
+    return transporter.sendMail({
+      from: `"Anshul Portfolio" <${env.CONTACT_FROM_EMAIL}>`,
+      to: env.CONTACT_TO_EMAIL,
+      replyTo: email,
+      subject: `New portfolio inquiry from ${name}`,
+      text: [
+        `Name: ${name}`,
+        `Email: ${email}`,
+        "",
+        "Message:",
+        message
+      ].join("\n"),
+      html: `
+        <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #111827;">
+          <h2 style="margin-bottom: 12px;">New portfolio inquiry</h2>
+          <p><strong>Name:</strong> ${name}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Message:</strong></p>
+          <p style="white-space: pre-line;">${message}</p>
+        </div>
+      `
+    });
   }
 
-  return transporter.sendMail({
-    from: `"Anshul Portfolio" <${env.CONTACT_FROM_EMAIL}>`,
-    to: env.CONTACT_TO_EMAIL,
-    replyTo: email,
-    subject: `New portfolio inquiry from ${name}`,
-    text: [
-      `Name: ${name}`,
-      `Email: ${email}`,
-      "",
-      "Message:",
-      message
-    ].join("\n"),
-    html: `
-      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #111827;">
-        <h2 style="margin-bottom: 12px;">New portfolio inquiry</h2>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Message:</strong></p>
-        <p style="white-space: pre-line;">${message}</p>
-      </div>
-    `
-  });
+  return sendWithResend({ name, email, message });
 }
