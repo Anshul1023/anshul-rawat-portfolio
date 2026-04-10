@@ -5,8 +5,11 @@ dotenv.config();
 
 const envSchema = z.object({
   PORT: z.coerce.number().default(8080),
-  CORS_ORIGIN: z.string().default("http://localhost:5173"),
-  CONTACT_TO_EMAIL: z.string().email(),
+  CORS_ORIGIN: z
+    .string()
+    .default("http://localhost:5173,https://anshul-rawat-portfolio.vercel.app"),
+  CONTACT_TO_EMAIL: z.string().email().optional(),
+  ADMIN_EMAIL: z.string().email().optional(),
   CONTACT_FROM_EMAIL: z.string().email().optional(),
   SMTP_HOST: z.string().optional(),
   SMTP_PORT: z.coerce.number().default(587),
@@ -40,6 +43,16 @@ const resendConfigured = Boolean(
     (parsedEnv.data.RESEND_FROM_EMAIL || parsedEnv.data.CONTACT_FROM_EMAIL)
 );
 
+const contactToEmail = parsedEnv.data.CONTACT_TO_EMAIL || parsedEnv.data.ADMIN_EMAIL;
+
+if (!contactToEmail) {
+  console.error("Invalid backend environment variables");
+  console.error({
+    CONTACT_TO_EMAIL: ["Provide CONTACT_TO_EMAIL or ADMIN_EMAIL."]
+  });
+  process.exit(1);
+}
+
 if (!smtpConfigured && !resendConfigured) {
   console.error("Invalid backend environment variables");
   console.error({
@@ -52,6 +65,7 @@ if (!smtpConfigured && !resendConfigured) {
 
 export const env = {
   ...parsedEnv.data,
+  CONTACT_TO_EMAIL: contactToEmail,
   smtpConfigured,
   resendConfigured
 };
