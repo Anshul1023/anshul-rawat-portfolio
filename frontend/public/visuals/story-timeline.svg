@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900">
+  <rect width="1200" height="900" fill="#050b18"/>
+  <path d="M600 130v640" stroke="#67e8f9" stroke-width="6" stroke-dasharray="16 18"/>
+  <circle cx="600" cy="220" r="26" fill="#67e8f9"/>
+  <circle cx="600" cy="430" r="26" fill="#8b5cf6"/>
+  <circle cx="600" cy="650" r="26" fill="#fb7185"/>
+  <rect x="170" y="160" width="340" height="120" rx="28" fill="#0f172a" stroke="#67e8f9"/>
+  <rect x="690" y="360" width="340" height="120" rx="28" fill="#0f172a" stroke="#8b5cf6"/>
+  <rect x="170" y="580" width="340" height="120" rx="28" fill="#0f172a" stroke="#fb7185"/>
+  <text x="220" y="230" font-size="34" fill="#e2e8f0" font-family="Arial, sans-serif">Frontend foundation</text>
+  <text x="740" y="430" font-size="34" fill="#e2e8f0" font-family="Arial, sans-serif">Full stack delivery</text>
+  <text x="220" y="650" font-size="34" fill="#e2e8f0" font-family="Arial, sans-serif">Production habits</text>
+</svg>
+

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#07111f"/>
+      <stop offset="100%" stop-color="#111827"/>
+    </linearGradient>
+    <linearGradient id="line" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#67e8f9"/>
+      <stop offset="100%" stop-color="#fb7185"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#bg)"/>
+  <circle cx="250" cy="190" r="220" fill="#67e8f9" opacity=".12"/>
+  <circle cx="1270" cy="680" r="250" fill="#fb7185" opacity=".12"/>
+  <rect x="130" y="120" width="1340" height="660" rx="36" fill="#08101d" stroke="#334155" opacity=".92"/>
+  <path d="M210 660C430 460 690 490 860 350s320-160 530-60" fill="none" stroke="url(#line)" stroke-width="8" stroke-linecap="round"/>
+  <path d="M230 540C460 650 640 610 870 500s330-130 460-80" fill="none" stroke="#8b5cf6" stroke-width="4" opacity=".7" stroke-linecap="round"/>
+  <g fill="#e2e8f0">
+    <text x="210" y="240" font-size="44" font-family="Arial, sans-serif" letter-spacing="8">EDITORIAL SCROLL SYSTEM</text>
+    <text x="210" y="320" font-size="92" font-family="Arial, sans-serif" font-weight="700">Frontend Atmosphere</text>
+    <text x="210" y="420" font-size="92" font-family="Arial, sans-serif" font-weight="700">Backend Precision</text>
+  </g>
+  <rect x="210" y="500" width="270" height="96" rx="28" fill="#0f172a" stroke="#67e8f9" opacity=".95"/>
+  <text x="262" y="557" font-size="30" fill="#e0f2fe" font-family="Arial, sans-serif">Scroll to enter</text>
+</svg>
+
