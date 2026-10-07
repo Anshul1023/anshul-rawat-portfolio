@@ -1,0 +1,89 @@
+name: Build HR Guide PDF
+
+on:
+  push:
+    branches: [Ansh]
+    paths:
+      - "docs/HR-Dashboard-Client-User-Guide.md"
+      - ".github/workflows/build-hr-guide-pdf.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install PDF tools
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install markdown weasyprint
+
+      - name: Build PDF
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import markdown
+          from weasyprint import HTML
+
+          src = Path("docs/HR-Dashboard-Client-User-Guide.md")
+          out = Path("docs/HR-Dashboard-Client-User-Guide.pdf")
+
+          body = markdown.markdown(
+              src.read_text(encoding="utf-8"),
+              extensions=["tables", "fenced_code"]
+          )
+
+          html = """<!doctype html>
+          <html>
+          <head>
+            <meta charset="utf-8">
+            <style>
+              @page {
+                size: A4;
+                margin: 17mm 15mm 18mm 15mm;
+                @bottom-right {
+                  content: "Page " counter(page);
+                  font-size: 8pt;
+                  color: #6b7280;
+                }
+              }
+              body { font-family: "DejaVu Sans", Arial, sans-serif; font-size: 9.2pt; line-height: 1.42; color: #172033; }
+              h1 { font-size: 22pt; color: #10233f; margin: 0 0 12pt; page-break-before: always; border-bottom: 2px solid #dbe3ee; padding-bottom: 6pt; }
+              h1:first-of-type { page-break-before: auto; }
+              h2 { font-size: 15pt; color: #173b66; margin: 16pt 0 7pt; page-break-after: avoid; }
+              h3 { font-size: 11.5pt; color: #28527d; margin: 12pt 0 5pt; page-break-after: avoid; }
+              p { margin: 5pt 0; }
+              ul, ol { margin-top: 4pt; margin-bottom: 6pt; }
+              li { margin: 2pt 0; }
+              table { width: 100%; border-collapse: collapse; margin: 7pt 0 10pt; font-size: 8.2pt; page-break-inside: avoid; }
+              th { background: #eef3f8; color: #173b66; font-weight: 700; text-align: left; }
+              th, td { border: 0.6pt solid #cbd5e1; padding: 4pt 5pt; vertical-align: top; }
+              pre { background: #f5f7fa; border: 0.6pt solid #d8dee8; border-radius: 4pt; padding: 7pt; font-size: 7.8pt; line-height: 1.28; white-space: pre-wrap; page-break-inside: avoid; }
+              strong { color: #172b4d; }
+              hr { border: 0; border-top: 1pt solid #dbe3ee; margin: 12pt 0; }
+            </style>
+          </head>
+          <body>
+            <div style="margin-bottom:55pt;">
+              <div style="font-size:10pt; letter-spacing:1.2pt; color:#5b6b82; font-weight:700;">AWP · AUSTRALIAN WORKFORCE PLATFORM</div>
+              <div style="font-size:27pt; font-weight:800; color:#10233f; margin-top:10pt;">HR Dashboard</div>
+              <div style="font-size:17pt; color:#28527d; margin-top:2pt;">Client User Guide</div>
+              <div style="margin-top:18pt; font-size:10pt; color:#667085;">October 2026 · Southern Cross Group demo build</div>
+              <div style="margin-top:28pt; padding:12pt; background:#eef3f8; border-radius:6pt;">Compact client reference covering HR pages, filters, actions, workflows, permissions, data flow and current-build limitations.</div>
+            </div>
+          BODY_PLACEHOLDER
+          </body></html>""".replace("BODY_PLACEHOLDER", body)
+
+          HTML(string=html, base_url=".").write_pdf(out)
+          PY
+
+      - name: Commit PDF
+        run: |
+          git config user.name "HR Guide Builder"
+          git config user.email "actions@users.noreply.github.com"
+          git add docs/HR-Dashboard-Client-User-Guide.pdf
+          git commit -m "Build HR Dashboard client guide PDF" || exit 0
+          git push
